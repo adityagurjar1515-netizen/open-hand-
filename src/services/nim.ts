@@ -67,10 +67,10 @@ export class NIMProvider implements AIProvider {
 
   async generate(params: GenerationParams): Promise<string> {
     const response = await this.request<{ choices: Array<{ message: { content: string } }> }>(
-      '/completions',
+      '/chat/completions',
       {
         model: this.defaultModel,
-        prompt: params.prompt,
+        messages: [{ role: 'user', content: params.prompt }],
         max_tokens: params.maxTokens || 1024,
         temperature: params.temperature || 0.7,
         top_p: params.topP || 0.9,
@@ -83,13 +83,14 @@ export class NIMProvider implements AIProvider {
 
   async structuredGenerate(params: StructuredGenerationParams): Promise<Record<string, unknown>> {
     const response = await this.request<{ choices: Array<{ message: { content: string } }> }>(
-      '/completions',
+      '/chat/completions',
       {
         model: this.defaultModel,
-        prompt: `${params.prompt}\n\nProvide your response in valid JSON format matching this schema: ${JSON.stringify(params.schema)}`,
+        messages: [
+          { role: 'user', content: `${params.prompt}\n\nProvide your response in valid JSON format matching this schema: ${JSON.stringify(params.schema)}` }
+        ],
         max_tokens: params.maxTokens || 2048,
         temperature: params.temperature || 0.3,
-        stop: ['```', '```json'],
       }
     );
 

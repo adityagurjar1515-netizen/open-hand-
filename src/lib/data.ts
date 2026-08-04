@@ -184,7 +184,7 @@ export const sampleFacts: Fact[] = [
       {
         id: 's6',
         title: 'Historical Engineering Records',
-        publisher: 'SETE (Société d'Exploitation de la Tour Eiffel)',
+        publisher: "SETE (Société d'Exploitation de la Tour Eiffel)",
         date: new Date('2023-05-10'),
         reference: 'SETE-2023',
         evidenceSummary: 'Official maintenance records and thermal measurements',
