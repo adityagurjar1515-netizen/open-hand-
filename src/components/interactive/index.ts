@@ -1,1 +1,1 @@
-export { InteractiveDiorama, ScrollDrivenScene, MicroAnimationTrigger, SizeComparisonStage } from './InteractiveDiorama';
+export { InteractiveDiorama, ScrollDrivenScene, MicroAnimationTrigger } from './InteractiveDiorama';
