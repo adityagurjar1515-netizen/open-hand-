@@ -106,6 +106,7 @@ function HomeContent() {
         factOfMoment={factOfMoment}
         onRandomFact={handleRandomFact}
         onExploreFacts={handleExploreFacts}
+        autoRefreshFacts={sampleFacts.slice(0, 5)}
       />
 
       {/* Categories Section */}
