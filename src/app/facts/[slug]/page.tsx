@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -19,16 +19,26 @@ import {
   Volume2,
   VolumeX,
   ChevronDown,
+  Box,
+  Sparkles,
+  RotateCcw,
+  ZoomIn,
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/Button';
 import { getFactBySlug, sampleFacts } from '@/lib/data';
 import { cn, getDifficultyColor, formatDate } from '@/lib/utils';
 import type { Fact } from '@/types';
+import { InteractiveDiorama, ScrollDrivenScene, MicroAnimationTrigger } from '@/components/interactive';
 
 const Scene3D = dynamic(
   () => import('@/components/3d/Scene3D').then((mod) => mod.Scene3D),
   { ssr: false }
+);
+
+const FactScene3D = dynamic(
+  () => import('@/components/3d/FactScene3D').then((mod) => mod.FactScene3D),
+  { ssr: false, loading: () => <div className="w-full h-full bg-slate-900/50 animate-pulse rounded-2xl" /> }
 );
 
 function FactDetailContent() {
@@ -42,12 +52,33 @@ function FactDetailContent() {
   const [currentSentence, setCurrentSentence] = useState(0);
   const [showSources, setShowSources] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [showDiorama, setShowDiorama] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeAnimation, setActiveAnimation] = useState<string | null>(null);
   
   const containerRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end start'],
   });
+
+  // Track scroll progress for scrollytelling
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!scrollRef.current) return;
+      const rect = scrollRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      if (rect.top <= 0 && rect.bottom >= windowHeight) {
+        const progress = Math.min(1, Math.max(0, -rect.top / (rect.height - windowHeight)));
+        setScrollProgress(progress);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
@@ -247,6 +278,14 @@ function FactDetailContent() {
               <Share2 className="w-4 h-4 mr-2" />
               Share
             </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowDiorama(true)}
+              className="border-cyan-500/50 hover:bg-cyan-500/20"
+            >
+              <Box className="w-4 h-4 mr-2" />
+              Explore 3D Diorama
+            </Button>
           </motion.div>
         </div>
       </motion.div>
@@ -377,6 +416,41 @@ function FactDetailContent() {
           )}
         </div>
       </motion.section>
+
+      {/* 3D Interactive Diorama Modal */}
+      <AnimatePresence>
+        {showDiorama && fact && (
+          <InteractiveDiorama 
+            fact={fact} 
+            onClose={() => setShowDiorama(false)}
+            scrollProgress={scrollProgress}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Scrollytelling Section */}
+      <section ref={scrollRef} className="relative py-20">
+        <div className="max-w-4xl mx-auto px-6 mb-8">
+          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+            <Sparkles className="w-6 h-6 text-cyan-400" />
+            Interactive 3D Experience
+          </h2>
+          <p className="text-slate-400">Scroll down to explore this fact in 3D!</p>
+        </div>
+        <ScrollDrivenScene />
+      </section>
+
+      {/* Micro-Animation Trigger */}
+      {fact && (
+        <section className="py-10">
+          <div className="max-w-4xl mx-auto px-6">
+            <MicroAnimationTrigger 
+              fact={fact} 
+              onTrigger={(animation) => setActiveAnimation(animation)}
+            />
+          </div>
+        </section>
+      )}
 
       {/* Navigation */}
       <section className="relative py-20 border-t border-slate-800/50">
