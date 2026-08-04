@@ -164,7 +164,7 @@ function QuizContent() {
                           ? currentQ.isTrue
                             ? 'border-green-500 bg-green-500/20'
                             : 'border-red-500 bg-red-500/20'
-                          : selectedAnswer !== null && currentQ.isTrue && selectedAnswer !== true
+                          : selectedAnswer !== null && currentQ.isTrue && selectedAnswer !== currentQ.isTrue
                           ? 'border-green-500/50'
                           : 'border-slate-700 hover:border-green-500/50 hover:bg-green-500/5',
                         selectedAnswer === null && 'cursor-pointer',
