@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Menu, X, Search, BookOpen, Sparkles, Zap } from 'lucide-react';
+import { Menu, X, Search, BookOpen, Sparkles, Zap, User } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { SearchModal } from '@/components/search/SearchModal';
 import { useUIStore } from '@/store';
@@ -45,6 +45,7 @@ export function Header() {
                 { href: '/facts', label: 'Explore', icon: BookOpen },
                 { href: '/categories', label: 'Categories', icon: BookOpen },
                 { href: '/quiz', label: 'Quiz', icon: BookOpen },
+                { href: '/profile', label: 'Profile', icon: User },
               ].map(({ href, label, icon: Icon }) => (
                 <Link
                   key={href}
