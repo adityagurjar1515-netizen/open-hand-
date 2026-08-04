@@ -36,9 +36,9 @@ const Scene3D = dynamic(
   { ssr: false }
 );
 
-const FactScene3D = dynamic(
-  () => import('@/components/3d/FactScene3D').then((mod) => mod.FactScene3D),
-  { ssr: false, loading: () => <div className="w-full h-full bg-slate-900/50 animate-pulse rounded-2xl" /> }
+const PerFactViz = dynamic(
+  () => import('@/components/3d/PerFactVisualizer').then((mod) => mod.PerFactVisualizer),
+  { ssr: false, loading: () => <div className="w-full h-80 bg-slate-900/50 animate-pulse rounded-2xl" /> }
 );
 
 function FactDetailContent() {
@@ -289,6 +289,36 @@ function FactDetailContent() {
           </motion.div>
         </div>
       </motion.div>
+
+      {/* Unique 3D Animation for this Fact */}
+      {fact && (
+        <section className="relative py-10">
+          <div className="max-w-4xl mx-auto px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-6"
+            >
+              <h2 className="text-2xl font-bold text-white mb-2">Visual Explainer</h2>
+              <p className="text-slate-400">Interactive 3D animation based on this fact</p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="glass rounded-3xl p-4"
+            >
+              <PerFactViz
+                factTitle={fact.title}
+                factExplanation={fact.shortExplanation}
+                category={fact.category}
+                height="400px"
+              />
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       {/* Long Explanation Section */}
       <motion.section
