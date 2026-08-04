@@ -103,7 +103,7 @@ function HomeContent() {
 
       {/* Hero Section */}
       <Hero
-        factOfMoment={factOfMoment}
+        factOfMoment={factOfMoment ?? undefined}
         onRandomFact={handleRandomFact}
         onExploreFacts={handleExploreFacts}
         autoRefreshFacts={sampleFacts.slice(0, 5)}
